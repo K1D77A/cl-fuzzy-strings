@@ -3,9 +3,9 @@
 ;; is an approximate string matching algorithm. The algorithm tells whether a given text contains a substring which is "approximately equal" to a given pattern, where approximate equality is defined in terms of Levenshtein distance — if the substring and pattern are within a given distance k of each other, then the algorithm considers them equal.
 ;; The algorithm begins by precomputing a set of bitmasks containing one bit for each element of the
  pattern. Then it is able to do most of the work with bitwise operations, which are extremely fast.|#
-(in-package :klambda-cl-bitap)
+;;(in-package :klambda-cl-bitap)
 ;;;point of note this is not in a functional style. 
-(defun search-string(strng pattern)
+(defun exact-string-bitap(strng pattern)
   "Takes in a string and a pattern, then if it finds the pattern, it will return the array index where it starts in strng"
   (let ((pat-len (length pattern))
 	(bitmasks (lognot 1))
@@ -22,7 +22,7 @@
 		      (setf bitmasks (ash (logior (aref pattern-mask (char-code (aref strng i)))) 1))
 		      (if (= 0 (logand bitmasks (ash 1 pat-len)))
 			  (return (1+ (- i pat-len))))))))))
-(defun fuzzy-search-string (strng pattern distance-k)
+(defun fuzzy-bitap (strng pattern distance-k)
   "Takes in a string, a pattern and an acceptable number of errors. and returns the starting index for an 'acceptable' match"
   (let ((result nil)
 	(pat-len (length pattern))

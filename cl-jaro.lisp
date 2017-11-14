@@ -1,3 +1,6 @@
+;;;;original https://gist.github.com/ronnieoverby/2aa19724199df4ec8af6
+
+
 (defun fuzzy-string-jaro (str1 str2 &key  (threshold 0.7) (number-chars 4) (equality-pred #'char=))
   (- 1.0 (proximity str1 str2 threshold number-chars equality-pred)))
 
