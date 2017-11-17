@@ -45,6 +45,7 @@
 			 (ash (logior (aref bitmasks 0)
 				      (aref pattern-mask (char-code (aref strng i))))
 			      1))
+		   (print result)
 		   (loop :for iter :from 1 :to distance-k
 		      :for tmp := (aref bitmasks iter)
 		      :do (setf (aref bitmasks iter)
@@ -59,3 +60,19 @@
     result))
     
     
+(defun bitap-exact (text pattern)
+  (cond ((null pattern)
+	 text)
+	((> (length pattern) 31)
+	 (format t "Pattern too long"))
+	(t (let ((m (length pattern))
+		 (r (lognot 1))
+		 (mask (make-array 128 :initial-element (lognot 0))))
+	     (dotimes (i m)
+	       (let ((val (aref mask (char-code(aref pattern i)))))
+		 (setf (aref mask (char-code(aref pattern i))) (logand val (lognot (ash 1 i))))))
+	     (loop :for i :from 0 :while (aref text i)
+		:do (setf r (logior (aref mask (char-code(aref text i)))))
+		:do (setf r (ash r 1))
+		:if (zerop (logand r (ash 1 m)))
+		:return (1+ (- i m)))))))

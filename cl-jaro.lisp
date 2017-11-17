@@ -1,15 +1,15 @@
-;;;;original https://gist.github.com/ronnieoverby/2aa19724199df4ec8af6
+;;;;original is here https://gist.github.com/ronnieoverby/2aa19724199df4ec8af6
+
+(defun distance (str1 str2  threshold number-chars)
+  (- 1.0 (proximity str1 str2 threshold number-chars)))
 
 
-(defun fuzzy-string-jaro (str1 str2 &key  (threshold 0.7) (number-chars 4) (equality-pred #'char=))
-  (- 1.0 (proximity str1 str2 threshold number-chars equality-pred)))
-
-(defun proximity (str1 str2 threshold  number-chars equality-pred) 
+(defun proximity (str1 str2 threshold number-chars) 
   (let* ((lenstr1 (length str1))
 	 (lenstr2 (length str2))
 	 (search-range (max 0 (1- (/ (max lenstr1 lenstr2) 2))))
-	 (matched1 (make-array lenstr1 :element-type 'boolean :initial-element nil))
-	 (matched2 (make-array lenstr2 :element-type 'boolean :initial-element nil))
+	 (matched1 (make-array lenstr1))
+	 (matched2 (make-array lenstr2))
 	 (common 0)
 	 (half-transposed 0)
 	 (k 0)
@@ -19,16 +19,16 @@
 	 (max 0)
 	 (pos 0))
     (loop
-       :for i :from 0 :upto (1- lenstr1)
+       :for i :from 0 :to (1- lenstr1)
        :for start := (max 0 (- i search-range))
        :for end := (min (+ i search-range 1) lenstr2)
        :do (loop
 	      :for j :from start :to (1- end)
 	      :for str1i := (aref str1 i)
 	      :for str2i := (aref str2 j)
-	      :do (print str1i)
-	      :do (print str2i)
-	      :when (or (not (aref matched2 j)) (funcall equality-pred  str1i str2i))
+	     ;; :do (print (aref matched2 j))
+	      ;;:do (print (equal str1i str2i))
+	      :when (or (not (aref matched2 j)) (equal  str1i str2i))
 	      :do (progn   (setf (aref matched1 i) t)
 			   (setf (aref matched2 j) t)
 			   (incf common)
@@ -43,10 +43,11 @@
 		:while (not (aref matched2 k))
 		:do (incf k))
        :unless (not val)
-         :if (not  (funcall equality-pred  (aref str1 i)(aref str2 k)))
+         :if (not  (equal  (aref str1 i)(aref str2 k)))
            :do (incf half-transposed)
        :do (incf k))
     (setf transposed (/ half-transposed 2))
+   ; (print common)
     (setf common-d common)
     (setf weight (/ (+ (/ common-d lenstr1)
 		       (/ common-d lenstr2)
@@ -57,7 +58,7 @@
 	weight)
     (setf max (min number-chars (min (length str1) (length str2))))
     (loop
-       :while (and (< pos max) (funcall equality-pred (aref str1 pos)(aref str2 pos)))
+       :while (and (< pos max) (equal (aref str1 pos)(aref str2 pos)))
        :do (incf pos))
     (if (zerop pos)
 	weight
