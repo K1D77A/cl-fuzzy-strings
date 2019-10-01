@@ -1,5 +1,5 @@
 ;;;;original is here https://gist.github.com/ronnieoverby/2aa19724199df4ec8af6
-
+(in-package #:cl-fuzzy-strings)
 
 (defun jaro-distance (str1 str2)
   (if (string= str1 str2)
@@ -46,13 +46,3 @@
 		 (/ (- common (/ transposed 2))
 		    common))
 	      3.0)))))
-#|CL-USER> (jaro-distance "jellyfish" "smellyfish")
-
-0.89629626
-CL-USER> (jaro-distance "dixon" "dicksonx")
-0.76666665
-CL-USER> (jaro-distance "martha" "marhta")
-0.9444444
-These are the same results that can be found at https://rosettacode.org/wiki/Jaro_distance#C.2B.2B
-
-#|

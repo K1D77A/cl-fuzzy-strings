@@ -3,7 +3,7 @@
 ;; is an approximate string matching algorithm. The algorithm tells whether a given text contains a substring which is "approximately equal" to a given pattern, where approximate equality is defined in terms of Levenshtein distance — if the substring and pattern are within a given distance k of each other, then the algorithm considers them equal.
 ;; The algorithm begins by precomputing a set of bitmasks containing one bit for each element of the
  pattern. Then it is able to do most of the work with bitwise operations, which are extremely fast.|#
-;;(in-package :klambda-cl-bitap)
+(in-package #:cl-fuzzy-strings)
 ;;;point of note this is not in a functional style. 
 (defun exact-string-bitap(strng pattern)
   "Takes in a string and a pattern, then if it finds the pattern, it will return the array index where it starts in strng"

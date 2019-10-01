@@ -4,6 +4,8 @@
 ;;;all credit goes to whoever wrote that.
 ;;;https://en.wikipedia.org/wiki/Levenshtein_distance
 ;;;"a string metric for measuring the difference between two sequences."
+(in-package #:cl-fuzzy-strings)
+
 (defun levenshtein-distance (str1 str2)
   "Calculates the Levenshtein distance between str1 and str2, returns an editing distance (int)."
   (let ((n (length str1))

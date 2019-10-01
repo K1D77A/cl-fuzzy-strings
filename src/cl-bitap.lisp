@@ -3,7 +3,7 @@
 ;; is an approximate string matching algorithm. The algorithm tells whether a given text contains a substring which is "approximately equal" to a given pattern, where approximate equality is defined in terms of Levenshtein distance — if the substring and pattern are within a given distance k of each other, then the algorithm considers them equal.
 ;; The algorithm begins by precomputing a set of bitmasks containing one bit for each element of the
  pattern. Then it is able to do most of the work with bitwise operations, which are extremely fast.|#
-;;(in-package :klambda-cl-bitap)
+(in-package #:cl-fuzzy-strings)
 ;;;point of note this is not in a functional style. 
 (defun exact-string-bitap(strng pattern)
   "Takes in a string and a pattern, then if it finds the pattern, it will return the array index where it starts in strng"
@@ -45,6 +45,7 @@
 			 (ash (logior (aref bitmasks 0)
 				      (aref pattern-mask (char-code (aref strng i))))
 			      1))
+		   (print result)
 		   (loop :for iter :from 1 :to distance-k
 		      :for tmp := (aref bitmasks iter)
 		      :do (setf (aref bitmasks iter)
@@ -59,3 +60,19 @@
     result))
     
     
+(defun bitap-exact (text pattern)
+  (cond ((null pattern)
+	 text)
+	((> (length pattern) 31)
+	 (format t "Pattern too long"))
+	(t (let ((m (length pattern))
+		 (r (lognot 1))
+		 (mask (make-array 128 :initial-element (lognot 0))))
+	     (dotimes (i m)
+	       (let ((val (aref mask (char-code(aref pattern i)))))
+		 (setf (aref mask (char-code(aref pattern i))) (logand val (lognot (ash 1 i))))))
+	     (loop :for i :from 0 :while (aref text i)
+		:do (setf r (logior (aref mask (char-code(aref text i)))))
+		:do (setf r (ash r 1))
+		:if (zerop (logand r (ash 1 m)))
+		:return (1+ (- i m)))))))
